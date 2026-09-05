@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "657584490864",
+    "project_id": "pocketing-6ccba",
+    "storage_bucket": "pocketing-6ccba.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:657584490864:android:8115e5557508a45e7967b5",
+        "android_client_info": {
+          "package_name": "com.theofsp.pocketing"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "657584490864-24rodmec4qlmhqckccc38jb9chqvljop.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDHmqMFDgdrMiAUo0DN65NOtNS9IIgGVbY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "657584490864-24rodmec4qlmhqckccc38jb9chqvljop.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
