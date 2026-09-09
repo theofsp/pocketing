@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'home_screen.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -15,17 +16,48 @@ class _LoginScreenState extends State<LoginScreen> {
   Future<void> _signInWithGoogle() async {
     setState(() => _loading = true);
     try {
-      await FirebaseAuth.instance.signInAnonymously();
+      final GoogleSignInAccount account =
+          await GoogleSignIn.instance.authenticate();
+      final GoogleSignInAuthentication auth = account.authentication;
+      final credential = GoogleAuthProvider.credential(
+        idToken: auth.idToken,
+      );
+      await FirebaseAuth.instance.signInWithCredential(credential);
       if (mounted) {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (_) => const HomeScreen()),
         );
       }
+    } on GoogleSignInException catch (e) {
+      // SEMENTARA: tampilkan semua kode error, termasuk "canceled",
+      // biar kita tahu persis apa yang sebenarnya terjadi.
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'GoogleSignInException — code: ${e.code}, desc: ${e.description ?? "-"}',
+            ),
+            duration: const Duration(seconds: 8),
+          ),
+        );
+      }
+    } on FirebaseAuthException catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('FirebaseAuthException — code: ${e.code}, msg: ${e.message}'),
+            duration: const Duration(seconds: 8),
+          ),
+        );
+      }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Login gagal: $e')),
+          SnackBar(
+            content: Text('Error lain: $e'),
+            duration: const Duration(seconds: 8),
+          ),
         );
       }
     } finally {
@@ -42,34 +74,24 @@ class _LoginScreenState extends State<LoginScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Image.asset('assets/images/logo.png', width: 120, height: 120),
-              const SizedBox(height: 16),
-              const Text(
-                'Pocketing',
-                style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: Color(0xFFE91E63)),
-              ),
-              const SizedBox(height: 8),
-              const Text(
-                'Give value to get money',
-                style: TextStyle(fontSize: 16, color: Color(0xFFEC407A)),
-              ),
+              Image.asset('assets/images/mainlogo.png', width: 250),
               const SizedBox(height: 48),
               _loading
-                  ? const CircularProgressIndicator(color: Color(0xFFE91E63))
-                  : ElevatedButton.icon(
-                      onPressed: _signInWithGoogle,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.white,
-                        foregroundColor: const Color(0xFFE91E63),
-                        padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                      ),
-                      icon: const Icon(Icons.login),
-                      label: const Text(
-                        'Masuk dengan Google',
-                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-                      ),
-                    ),
+                ? const CircularProgressIndicator(color: Color(0xFFE91E63))
+                : ElevatedButton.icon(
+                  onPressed: _signInWithGoogle,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.white,
+                    foregroundColor: const Color(0xFFE91E63),
+                    padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  ),
+                  icon: const Icon(Icons.login),
+                  label: const Text(
+                    'Masuk dengan Google',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                  ),
+                ),
             ],
           ),
         ),

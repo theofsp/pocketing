@@ -40,21 +40,7 @@ class _SplashScreenState extends State<SplashScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Image.asset('assets/images/logo.png', width: 120, height: 120),
-              const SizedBox(height: 16),
-              const Text(
-                'Pocketing',
-                style: TextStyle(
-                  fontSize: 32,
-                  fontWeight: FontWeight.bold,
-                  color: Color(0xFFE91E63),
-                ),
-              ),
-              const SizedBox(height: 8),
-              const Text(
-                'Give value to get money',
-                style: TextStyle(fontSize: 16, color: Color(0xFFEC407A)),
-              ),
+              Image.asset('assets/images/mainlogo.png', width: 250), 
             ],
           ),
         ),

@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "657584490864-oe2ubva2pmtjajtolt2s1dio3pfv03o6.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.theofsp.pocketing",
+            "certificate_hash": "ba9a2d5e4069c0114c92ec04ab4f43eb2dba2860"
+          }
+        },
+        {
           "client_id": "657584490864-24rodmec4qlmhqckccc38jb9chqvljop.apps.googleusercontent.com",
           "client_type": 3
         }

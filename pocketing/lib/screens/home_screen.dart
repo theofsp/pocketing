@@ -1,12 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'login_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
-
-  Future<void> _signOut() async {
-    await FirebaseAuth.instance.signOut();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -14,7 +11,13 @@ class HomeScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('⭐ Pocketing'),
+        title: Row(
+          children: [
+            Image.asset('assets/images/icon.png', width: 32, height: 32),
+            const SizedBox(width: 8),
+            const Text('Pocketing'),
+          ],
+        ),
         backgroundColor: const Color(0xFFE91E63),
         foregroundColor: Colors.white,
         actions: [
@@ -32,9 +35,16 @@ class HomeScreen extends StatelessWidget {
                       child: const Text('Batal'),
                     ),
                     TextButton(
-                      onPressed: () {
-                        Navigator.pop(ctx);
-                        _signOut();
+                      onPressed: () async {
+                        await FirebaseAuth.instance.signOut();
+                        if (ctx.mounted) {
+                          Navigator.pop(ctx);
+                          Navigator.pushAndRemoveUntil(
+                            ctx,
+                            MaterialPageRoute(builder: (_) => const LoginScreen()),
+                            (route) => false,
+                          );
+                        }
                       },
                       child: const Text('Logout', style: TextStyle(color: Colors.red)),
                     ),
