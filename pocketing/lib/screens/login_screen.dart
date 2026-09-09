@@ -1,6 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import '../services/child_service.dart';
+import '../onboarding/welcome_screen.dart';
 import 'home_screen.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -16,28 +18,25 @@ class _LoginScreenState extends State<LoginScreen> {
   Future<void> _signInWithGoogle() async {
     setState(() => _loading = true);
     try {
-      final GoogleSignInAccount account =
-          await GoogleSignIn.instance.authenticate();
+      final GoogleSignInAccount account = await GoogleSignIn.instance.authenticate();
       final GoogleSignInAuthentication auth = account.authentication;
-      final credential = GoogleAuthProvider.credential(
-        idToken: auth.idToken,
-      );
+      final credential = GoogleAuthProvider.credential(idToken: auth.idToken);
       await FirebaseAuth.instance.signInWithCredential(credential);
+
       if (mounted) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (_) => const HomeScreen()),
-        );
+        final hasChildren = await ChildService().hasChildren();
+        if (mounted) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (_) => hasChildren ? const HomeScreen() : const WelcomeScreen()),
+          );
+        }
       }
     } on GoogleSignInException catch (e) {
-      // SEMENTARA: tampilkan semua kode error, termasuk "canceled",
-      // biar kita tahu persis apa yang sebenarnya terjadi.
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(
-              'GoogleSignInException — code: ${e.code}, desc: ${e.description ?? "-"}',
-            ),
+            content: Text('GoogleSignInException — code: ${e.code}, desc: ${e.description ?? "-"}'),
             duration: const Duration(seconds: 8),
           ),
         );
@@ -45,19 +44,13 @@ class _LoginScreenState extends State<LoginScreen> {
     } on FirebaseAuthException catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('FirebaseAuthException — code: ${e.code}, msg: ${e.message}'),
-            duration: const Duration(seconds: 8),
-          ),
+          SnackBar(content: Text('FirebaseAuthException — code: ${e.code}, msg: ${e.message}'), duration: const Duration(seconds: 8)),
         );
       }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Error lain: $e'),
-            duration: const Duration(seconds: 8),
-          ),
+          SnackBar(content: Text('Error lain: $e'), duration: const Duration(seconds: 8)),
         );
       }
     } finally {
@@ -77,21 +70,18 @@ class _LoginScreenState extends State<LoginScreen> {
               Image.asset('assets/images/mainlogo.png', width: 250),
               const SizedBox(height: 48),
               _loading
-                ? const CircularProgressIndicator(color: Color(0xFFE91E63))
-                : ElevatedButton.icon(
-                  onPressed: _signInWithGoogle,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.white,
-                    foregroundColor: const Color(0xFFE91E63),
-                    padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                  ),
-                  icon: const Icon(Icons.login),
-                  label: const Text(
-                    'Masuk dengan Google',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-                  ),
-                ),
+                  ? const CircularProgressIndicator(color: Color(0xFFE91E63))
+                  : ElevatedButton.icon(
+                      onPressed: _signInWithGoogle,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white,
+                        foregroundColor: const Color(0xFFE91E63),
+                        padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                      ),
+                      icon: const Icon(Icons.login),
+                      label: const Text('Masuk dengan Google', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+                    ),
             ],
           ),
         ),

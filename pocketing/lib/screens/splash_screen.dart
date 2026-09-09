@@ -1,6 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'login_screen.dart';
+import '../onboarding/language_screen.dart';
+import '../onboarding/welcome_screen.dart';
+import '../services/child_service.dart';
 import 'home_screen.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -21,13 +23,18 @@ class _SplashScreenState extends State<SplashScreen> {
     await Future.delayed(const Duration(seconds: 2));
     final user = FirebaseAuth.instance.currentUser;
     if (!mounted) return;
+
+    if (user == null) {
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const LanguageScreen()));
+      return;
+    }
+
+    final hasChildren = await ChildService().hasChildren();
+    if (!mounted) return;
+
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(
-        builder: (_) => user != null
-            ? const HomeScreen()
-            : const LoginScreen(),
-      ),
+      MaterialPageRoute(builder: (_) => hasChildren ? const HomeScreen() : const WelcomeScreen()),
     );
   }
 
@@ -40,7 +47,7 @@ class _SplashScreenState extends State<SplashScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Image.asset('assets/images/mainlogo.png', width: 250), 
+              Image.asset('assets/images/mainlogo.png', width: 250),
             ],
           ),
         ),
