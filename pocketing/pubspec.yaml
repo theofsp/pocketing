@@ -28,3 +28,6 @@ flutter:
   assets:
     - assets/images/mainlogo.png
     - assets/images/icon.png
+    - assets/avatar/body/
+    - assets/avatar/hair/
+    = assets/avatar/outfit
